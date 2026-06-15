@@ -41,7 +41,7 @@ module QueueBus
             Runner2.run({})
           end
 
-          low /^patt.+ern/ do
+          low(/^patt.+ern/) do
             Runner.run({})
           end
         end

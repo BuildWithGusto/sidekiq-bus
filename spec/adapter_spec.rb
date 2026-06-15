@@ -18,13 +18,11 @@ describe 'adapter is set' do
     let(:config) { spy('Sidekiq') }
 
     around do |example|
-      begin
-        old = Sidekiq.options[:lifecycle_events][:startup]
-        Sidekiq.options[:lifecycle_events][:startup] = []
-        example.run
-      ensure
-        Sidekiq.options[:lifecycle_events][:startup] = old
-      end
+      old = Sidekiq.options[:lifecycle_events][:startup]
+      Sidekiq.options[:lifecycle_events][:startup] = []
+      example.run
+    ensure
+      Sidekiq.options[:lifecycle_events][:startup] = old
     end
 
     before do
@@ -46,7 +44,7 @@ describe 'adapter is set' do
 
       it 'has scheduled the queue bus worker' do
         expect(Sidekiq.get_schedule('sidekiqbus_heartbeat')['class'])
-          .to eq ::QueueBus::Worker.name
+          .to eq QueueBus::Worker.name
       end
 
       it 'will run the heartbeat proxy' do

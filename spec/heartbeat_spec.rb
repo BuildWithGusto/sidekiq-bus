@@ -8,15 +8,15 @@ module QueueBus
       {
         'epoch_seconds' => (Time.now.to_i / 60) * 60, # rounded
         'epoch_minutes' => Time.now.to_i / 60,
-        'epoch_hours'   => Time.now.to_i / (60 * 60),
-        'epoch_days'    => Time.now.to_i / (60 * 60 * 24),
+        'epoch_hours' => Time.now.to_i / (60 * 60),
+        'epoch_days' => Time.now.to_i / (60 * 60 * 24),
         'minute' => Time.now.min,
-        'hour'   => Time.now.hour,
-        'day'    => Time.now.day,
-        'month'  => Time.now.month,
-        'year'   => Time.now.year,
-        'yday'   => Time.now.yday,
-        'wday'   => Time.now.wday
+        'hour' => Time.now.hour,
+        'day' => Time.now.day,
+        'month' => Time.now.month,
+        'year' => Time.now.year,
+        'yday' => Time.now.yday,
+        'wday' => Time.now.wday
       }
     end
 

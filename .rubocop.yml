@@ -1,35 +1,82 @@
 AllCops:
-  TargetRubyVersion: 2.4
+  TargetRubyVersion: 3.3
   ExtraDetails: true
+  NewCops: enable
+  SuggestExtensions: false
 
-# http://rubocop.readthedocs.io/en/latest/cops_style/#stylefrozenstringliteralcomment
 Style/FrozenStringLiteralComment:
   Enabled: true
 
-# https://rubocop.readthedocs.io/en/latest/cops_style/#styledatetime
 Style/DateTime:
   Enabled: true
 
-# http://rubocop.readthedocs.io/en/latest/cops_metrics/#metricslinelength
-Metrics/LineLength:
+Layout/LineLength:
   Max: 100
+  Exclude:
+    - spec/**/*
 
 Metrics/MethodLength:
   Max: 15
+  Exclude:
+    - lib/**/*
 
 Metrics/BlockLength:
   Exclude:
     - spec/**/*
+    - "*.gemspec"
 
-# https://rubocop.readthedocs.io/en/latest/cops_layout/#layoutdotposition
+Metrics/AbcSize:
+  Exclude:
+    - lib/**/*
+    - spec/**/*
+
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - lib/**/*
+
+Metrics/PerceivedComplexity:
+  Exclude:
+    - lib/**/*
+
+Metrics/ModuleLength:
+  Exclude:
+    - spec/**/*
+
 Layout/DotPosition:
   Enabled: true
   EnforcedStyle: leading
 
-# https://rubocop.readthedocs.io/en/latest/cops_style/#stylehashsyntax
 Style/HashSyntax:
   Enabled: true
 
-# https://rubocop-rspec.readthedocs.io/en/latest/cops_rspec/#rspecfocus
-RSpec/Focus:
-  Enabled: true
+Style/Documentation:
+  Exclude:
+    - lib/**/*
+    - spec/**/*
+
+Naming/FileName:
+  Exclude:
+    - lib/sidekiq-bus.rb
+
+Lint/RescueException:
+  Exclude:
+    - lib/**/*
+
+Gemspec/DevelopmentDependencies:
+  Enabled: false
+
+Lint/ConstantDefinitionInBlock:
+  Exclude:
+    - spec/**/*
+
+Lint/SuppressedException:
+  Exclude:
+    - spec/**/*
+
+Lint/EmptyClass:
+  Exclude:
+    - spec/**/*
+
+Lint/EmptyBlock:
+  Exclude:
+    - spec/**/*

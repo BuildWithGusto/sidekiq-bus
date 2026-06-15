@@ -30,7 +30,8 @@ describe 'Publishing an event' do
     hash = JSON.parse(val)
     expect(hash['class']).to eq('QueueBus::Worker')
     expect(hash['args'].size).to eq(1)
-    expect(JSON.parse(hash['args'].first)).to eq({ 'bus_event_type' => event_name, 'two' => 'here', 'one' => 1, 'id' => 12 }.merge(bus_attrs))
+    expect(JSON.parse(hash['args'].first)).to eq({ 'bus_event_type' => event_name, 'two' => 'here',
+                                                   'one' => 1, 'id' => 12 }.merge(bus_attrs))
   end
 
   it 'should use the id if given' do
@@ -46,7 +47,8 @@ describe 'Publishing an event' do
     hash = JSON.parse(val)
     expect(hash['class']).to eq('QueueBus::Worker')
     expect(hash['args'].size).to eq(1)
-    expect(JSON.parse(hash['args'].first)).to eq({ 'bus_event_type' => event_name, 'two' => 'here', 'one' => 1 }.merge(bus_attrs).merge('bus_id' => 'app-given'))
+    expect(JSON.parse(hash['args'].first)).to eq({ 'bus_event_type' => event_name, 'two' => 'here',
+                                                   'one' => 1 }.merge(bus_attrs).merge('bus_id' => 'app-given'))
   end
 
   it 'should add metadata via callback' do
