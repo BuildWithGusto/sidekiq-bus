@@ -34,7 +34,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'sidekiq', ['>= 3.0.0', '< 8.0']
 
   spec.add_development_dependency 'json_pure'
-  spec.add_development_dependency 'pry'
   spec.add_development_dependency 'rack'
   spec.add_development_dependency 'redis-namespace'
   spec.add_development_dependency 'rspec'
