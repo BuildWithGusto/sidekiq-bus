@@ -7,7 +7,8 @@ module QueueBus
     describe '.from_redis' do
       it 'should return from attributes' do
         mult = { 'event_one' => { 'class' => 'MyClass', 'queue_name' => 'default', 'key' => 'event_one', 'matcher' => { 'bus_event_type' => 'event_one' } },
-                 'event_two' => { 'class' => 'MyClass', 'queue_name' => 'else', 'key' => 'event_two', 'matcher' => { 'bus_event_type' => 'event_two' } } }
+                 'event_two' => { 'class' => 'MyClass', 'queue_name' => 'else',
+                                  'key' => 'event_two', 'matcher' => { 'bus_event_type' => 'event_two' } } }
 
         list = SubscriptionList.from_redis(mult)
         expect(list.size).to eq(2)
@@ -36,7 +37,8 @@ module QueueBus
 
         hash = list.to_redis
         expect(hash).to eq('key1' => { 'queue_name' => 'default', 'key' => 'key1', 'class' => 'MyClass', 'matcher' => { 'bus_event_type' => 'event_one' } },
-                           'key2' => { 'queue_name' => 'else_ok', 'key' => 'key2', 'class' => 'MyClass', 'matcher' => { 'bus_event_type' => 'event_two' } })
+                           'key2' => { 'queue_name' => 'else_ok', 'key' => 'key2',
+                                       'class' => 'MyClass', 'matcher' => { 'bus_event_type' => 'event_two' } })
       end
     end
   end

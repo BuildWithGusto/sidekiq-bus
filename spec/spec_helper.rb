@@ -3,8 +3,6 @@
 require 'timecop'
 require 'queue-bus'
 require 'adapter/support'
-require 'pry'
-
 reset_test_adapter
 
 ENV['REDIS_URL'] ||= 'redis://localhost:6379/1'

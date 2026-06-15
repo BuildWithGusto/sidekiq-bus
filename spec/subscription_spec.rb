@@ -13,7 +13,8 @@ module QueueBus
     describe '.register' do
       it 'should take in args from dispatcher' do
         executor = proc { |attributes| }
-        sub = Subscription.register('queue_name', 'mykey', 'MyClass', { 'bus_event_type' => 'my_event' }, executor)
+        sub = Subscription.register('queue_name', 'mykey', 'MyClass',
+                                    { 'bus_event_type' => 'my_event' }, executor)
         expect(sub.send(:executor)).to eq(executor)
         expect(sub.matcher.filters).to eq('bus_event_type' => 'my_event')
         expect(sub.queue_name).to eq('queue_name')
@@ -34,20 +35,29 @@ module QueueBus
 
     describe '#to_redis' do
       it 'should return what to store for this subscription' do
-        sub = Subscription.new('queue_one', 'xyz', 'ClassName', { 'bus_event_type' => 'my_event' }, nil)
-        expect(sub.to_redis).to eq('queue_name' => 'queue_one', 'key' => 'xyz', 'class' => 'ClassName', 'matcher' => { 'bus_event_type' => 'my_event' })
+        sub = Subscription.new('queue_one', 'xyz', 'ClassName', { 'bus_event_type' => 'my_event' },
+                               nil)
+        expect(sub.to_redis).to eq('queue_name' => 'queue_one', 'key' => 'xyz',
+                                   'class' => 'ClassName', 'matcher' => { 'bus_event_type' => 'my_event' })
       end
     end
 
     describe '#matches?' do
       it 'should do pattern stuff' do
-        expect(Subscription.new('x', 'id', 'ClassName', 'bus_event_type' => 'one').matches?('bus_event_type' => 'one')).to eq(true)
-        expect(Subscription.new('x', 'id', 'ClassName', 'bus_event_type' => 'one').matches?('bus_event_type' => 'onex')).to eq(false)
-        expect(Subscription.new('x', 'id', 'ClassName', 'bus_event_type' => '^one.*$').matches?('bus_event_type' => 'onex')).to eq(true)
-        expect(Subscription.new('x', 'id', 'ClassName', 'bus_event_type' => 'one.*').matches?('bus_event_type' => 'onex')).to eq(true)
-        expect(Subscription.new('x', 'id', 'ClassName', 'bus_event_type' => 'one.?').matches?('bus_event_type' => 'onex')).to eq(true)
-        expect(Subscription.new('x', 'id', 'ClassName', 'bus_event_type' => 'one.?').matches?('bus_event_type' => 'one')).to eq(true)
-        expect(Subscription.new('x', 'id', 'ClassName', 'bus_event_type' => '\\').matches?('bus_event_type' => 'one')).to eq(false)
+        expect(Subscription.new('x', 'id', 'ClassName',
+                                'bus_event_type' => 'one').matches?('bus_event_type' => 'one')).to eq(true)
+        expect(Subscription.new('x', 'id', 'ClassName',
+                                'bus_event_type' => 'one').matches?('bus_event_type' => 'onex')).to eq(false)
+        expect(Subscription.new('x', 'id', 'ClassName',
+                                'bus_event_type' => '^one.*$').matches?('bus_event_type' => 'onex')).to eq(true)
+        expect(Subscription.new('x', 'id', 'ClassName',
+                                'bus_event_type' => 'one.*').matches?('bus_event_type' => 'onex')).to eq(true)
+        expect(Subscription.new('x', 'id', 'ClassName',
+                                'bus_event_type' => 'one.?').matches?('bus_event_type' => 'onex')).to eq(true)
+        expect(Subscription.new('x', 'id', 'ClassName',
+                                'bus_event_type' => 'one.?').matches?('bus_event_type' => 'one')).to eq(true)
+        expect(Subscription.new('x', 'id', 'ClassName',
+                                'bus_event_type' => '\\').matches?('bus_event_type' => 'one')).to eq(false)
       end
     end
   end

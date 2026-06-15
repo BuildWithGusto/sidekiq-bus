@@ -12,6 +12,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.4]
+
+### Changed
+- Update gemspec: authors and email reflect fork ownership, homepage updated to `guideline-tech` org, fork attribution added to description.
+- Add gemspec metadata: `source_code_uri`, `changelog_uri`, `homepage_uri`, `github_repo`, `rubygems_mfa_required`.
+- Modernize gemspec style: `frozen_string_literal`, `spec` variable, remove deprecated `test_files`.
+- Add `required_ruby_version >= 3.3`.
+- Fix `.rubocop.yml`: rename `Metrics/LineLength` → `Layout/LineLength`, bump `TargetRubyVersion` to 3.3, add `NewCops: enable`; autocorrect many pre-existing violations.
+- Add `.github/dependabot.yml` for bundler and GitHub Actions dependency updates.
+- Track `Gemfile.lock` in version control.
+
 ## [1.0.3]
 
 ### Changed

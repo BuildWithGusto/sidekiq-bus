@@ -20,8 +20,8 @@ module QueueBus
         ::QueueBus::Worker.include ::Sidekiq::Worker
       end
 
-      def redis(&block)
-        ::Sidekiq.redis(&block)
+      def redis(&)
+        ::Sidekiq.redis(&)
       end
 
       def enqueue(queue_name, klass, hash)
@@ -62,7 +62,7 @@ module QueueBus
           begin
             require 'sidekiq-scheduler'
           rescue LoadError
-            QueueBus.logger.error("sidekiq-scheduler must be installed!")
+            QueueBus.logger.error('sidekiq-scheduler must be installed!')
             raise
           end
 
@@ -79,7 +79,9 @@ module QueueBus
                 description: 'Enqueues a heart beat every minute for the queue-bus'
               )
 
-              ::Sidekiq::Scheduler.instance.update_schedule unless ::Sidekiq::Scheduler.instance.dynamic
+              unless ::Sidekiq::Scheduler.instance.dynamic
+                ::Sidekiq::Scheduler.instance.update_schedule
+              end
             end
           end
         end

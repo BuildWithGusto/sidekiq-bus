@@ -51,7 +51,8 @@ module QueueBus
         QueueBus.redis { |redis| redis.hset('bus_app:myapp', 'old_one', 'oldqueue_name') }
         app = Application.new('myapp')
         val = app.send(:read_redis_hash)
-        expect(val).to eq('new_one' => { 'queue_name' => 'x', 'bus_event_type' => 'event_name' }, 'old_one' => 'oldqueue_name')
+        expect(val).to eq('new_one' => { 'queue_name' => 'x', 'bus_event_type' => 'event_name' },
+                          'old_one' => 'oldqueue_name')
       end
     end
 
@@ -63,25 +64,37 @@ module QueueBus
         expect(QueueBus.redis { |redis| redis.get('bus_app:myapp') }).to be_nil
         Application.new('myapp').subscribe(test_list(sub1, sub2))
 
-        expect(QueueBus.redis { |redis| redis.hgetall('bus_app:myapp') }).to eq('event_two' => '{"queue_name":"default","key":"event_two","class":"::QueueBus::Rider","matcher":{"bus_event_type":"event_two"}}',
-                                                                                'event_one' => '{"queue_name":"default","key":"event_one","class":"::QueueBus::Rider","matcher":{"bus_event_type":"event_one"}}')
-        expect(QueueBus.redis { |redis| redis.hkeys('bus_app:myapp') }).to match_array(%w[event_one event_two])
+        expect(QueueBus.redis do |redis|
+          redis.hgetall('bus_app:myapp')
+        end).to eq('event_two' => '{"queue_name":"default","key":"event_two","class":"::QueueBus::Rider","matcher":{"bus_event_type":"event_two"}}',
+                   'event_one' => '{"queue_name":"default","key":"event_one","class":"::QueueBus::Rider","matcher":{"bus_event_type":"event_one"}}')
+        expect(QueueBus.redis do |redis|
+          redis.hkeys('bus_app:myapp')
+        end).to match_array(%w[event_one event_two])
         expect(QueueBus.redis { |redis| redis.smembers('bus_apps') }).to match_array(['myapp'])
       end
       it 'should add string to redis' do
         expect(QueueBus.redis { |redis| redis.get('bus_app:myapp') }).to be_nil
         Application.new('myapp').subscribe(test_list(sub1))
 
-        expect(QueueBus.redis { |redis| redis.hgetall('bus_app:myapp') }).to eq('event_one' => '{"queue_name":"default","key":"event_one","class":"::QueueBus::Rider","matcher":{"bus_event_type":"event_one"}}')
-        expect(QueueBus.redis { |redis| redis.hkeys('bus_app:myapp') }).to match_array(['event_one'])
+        expect(QueueBus.redis do |redis|
+          redis.hgetall('bus_app:myapp')
+        end).to eq('event_one' => '{"queue_name":"default","key":"event_one","class":"::QueueBus::Rider","matcher":{"bus_event_type":"event_one"}}')
+        expect(QueueBus.redis do |redis|
+          redis.hkeys('bus_app:myapp')
+        end).to match_array(['event_one'])
         expect(QueueBus.redis { |redis| redis.smembers('bus_apps') }).to match_array(['myapp'])
       end
       it 'should multiple queues to redis' do
         expect(QueueBus.redis { |redis| redis.get('bus_app:myapp') }).to be_nil
         Application.new('myapp').subscribe(test_list(sub1, sub2, sub3))
-        expect(QueueBus.redis { |redis| redis.hgetall('bus_app:myapp') }).to eq('event_two' => '{"queue_name":"default","key":"event_two","class":"::QueueBus::Rider","matcher":{"bus_event_type":"event_two"}}', 'event_one' => '{"queue_name":"default","key":"event_one","class":"::QueueBus::Rider","matcher":{"bus_event_type":"event_one"}}',
-                                                                                'event_three' => '{"queue_name":"other","key":"event_three","class":"::QueueBus::Rider","matcher":{"bus_event_type":"event_three"}}')
-        expect(QueueBus.redis { |redis| redis.hkeys('bus_app:myapp') }).to match_array(%w[event_three event_two event_one])
+        expect(QueueBus.redis do |redis|
+          redis.hgetall('bus_app:myapp')
+        end).to eq('event_two' => '{"queue_name":"default","key":"event_two","class":"::QueueBus::Rider","matcher":{"bus_event_type":"event_two"}}', 'event_one' => '{"queue_name":"default","key":"event_one","class":"::QueueBus::Rider","matcher":{"bus_event_type":"event_one"}}',
+                   'event_three' => '{"queue_name":"other","key":"event_three","class":"::QueueBus::Rider","matcher":{"bus_event_type":"event_three"}}')
+        expect(QueueBus.redis do |redis|
+          redis.hkeys('bus_app:myapp')
+        end).to match_array(%w[event_three event_two event_one])
         expect(QueueBus.redis { |redis| redis.smembers('bus_apps') }).to match_array(['myapp'])
       end
 
@@ -117,35 +130,68 @@ module QueueBus
 
     describe '#subscription_matches' do
       it 'should return if it is there' do
-        expect(Application.new('myapp').subscription_matches('bus_event_type' => 'three').collect { |s| [s.app_key, s.key, s.queue_name, s.class_name] }).to eq([])
+        expect(Application.new('myapp').subscription_matches('bus_event_type' => 'three').collect do |s|
+          [s.app_key, s.key, s.queue_name, s.class_name]
+        end).to eq([])
 
         subs = test_list(test_sub('one_x'), test_sub('one_y'), test_sub('one'), test_sub('two'))
         Application.new('myapp').subscribe(subs)
-        expect(Application.new('myapp').subscription_matches('bus_event_type' => 'three').collect { |s| [s.app_key, s.key, s.queue_name, s.class_name] }).to eq([])
+        expect(Application.new('myapp').subscription_matches('bus_event_type' => 'three').collect do |s|
+          [s.app_key, s.key, s.queue_name, s.class_name]
+        end).to eq([])
 
-        expect(Application.new('myapp').subscription_matches('bus_event_type' => 'two').collect { |s| [s.app_key, s.key, s.queue_name, s.class_name] }).to match_array([['myapp', 'two', 'default', '::QueueBus::Rider']])
-        expect(Application.new('myapp').subscription_matches('bus_event_type' => 'one').collect { |s| [s.app_key, s.key, s.queue_name, s.class_name] }).to match_array([['myapp', 'one', 'default', '::QueueBus::Rider']])
+        expect(Application.new('myapp').subscription_matches('bus_event_type' => 'two').collect do |s|
+          [s.app_key, s.key, s.queue_name, s.class_name]
+        end).to match_array([['myapp', 'two', 'default', '::QueueBus::Rider']])
+        expect(Application.new('myapp').subscription_matches('bus_event_type' => 'one').collect do |s|
+          [s.app_key, s.key, s.queue_name, s.class_name]
+        end).to match_array([['myapp', 'one', 'default', '::QueueBus::Rider']])
       end
 
       it 'should handle * wildcards' do
         subs = test_list(test_sub('one.+'), test_sub('one'), test_sub('one_.*'), test_sub('two'))
         Application.new('myapp').subscribe(subs)
-        expect(Application.new('myapp').subscription_matches('bus_event_type' => 'three').collect { |s| [s.app_key, s.key, s.queue_name, s.class_name] }).to eq([])
+        expect(Application.new('myapp').subscription_matches('bus_event_type' => 'three').collect do |s|
+          [s.app_key, s.key, s.queue_name, s.class_name]
+        end).to eq([])
 
-        expect(Application.new('myapp').subscription_matches('bus_event_type' => 'onex').collect { |s| [s.app_key, s.key, s.queue_name, s.class_name] }).to match_array([['myapp', 'one.+', 'default', '::QueueBus::Rider']])
-        expect(Application.new('myapp').subscription_matches('bus_event_type' => 'one').collect { |s| [s.app_key, s.key, s.queue_name, s.class_name] }).to match_array([['myapp', 'one', 'default', '::QueueBus::Rider']])
-        expect(Application.new('myapp').subscription_matches('bus_event_type' => 'one_x').collect { |s| [s.app_key, s.key, s.queue_name, s.class_name] }).to match_array([['myapp', 'one.+', 'default', '::QueueBus::Rider'], ['myapp', 'one_.*', 'default', '::QueueBus::Rider']])
+        expect(Application.new('myapp').subscription_matches('bus_event_type' => 'onex').collect do |s|
+          [s.app_key, s.key, s.queue_name,
+           s.class_name]
+        end).to match_array([['myapp', 'one.+', 'default', '::QueueBus::Rider']])
+        expect(Application.new('myapp').subscription_matches('bus_event_type' => 'one').collect do |s|
+          [s.app_key, s.key, s.queue_name, s.class_name]
+        end).to match_array([['myapp', 'one', 'default', '::QueueBus::Rider']])
+        expect(Application.new('myapp').subscription_matches('bus_event_type' => 'one_x').collect do |s|
+          [s.app_key, s.key, s.queue_name,
+           s.class_name]
+        end).to match_array([['myapp', 'one.+', 'default', '::QueueBus::Rider'],
+                             ['myapp', 'one_.*', 'default', '::QueueBus::Rider']])
       end
 
       it 'should handle actual regular expressions' do
         subs = test_list(test_sub(/one.+/), test_sub('one'), test_sub(/one_.*/), test_sub('two'))
         Application.new('myapp').subscribe(subs)
-        expect(Application.new('myapp').subscription_matches('bus_event_type' => 'three').collect { |s| [s.app_key, s.key, s.queue_name, s.class_name] }).to eq([])
+        expect(Application.new('myapp').subscription_matches('bus_event_type' => 'three').collect do |s|
+          [s.app_key, s.key, s.queue_name, s.class_name]
+        end).to eq([])
 
-        expect(Application.new('myapp').subscription_matches('bus_event_type' => 'onex').collect { |s| [s.app_key, s.key, s.queue_name, s.class_name] }).to match_array([['myapp', '(?-mix:one.+)', 'default', '::QueueBus::Rider']])
-        expect(Application.new('myapp').subscription_matches('bus_event_type' => 'donex').collect { |s| [s.app_key, s.key, s.queue_name, s.class_name] }).to match_array([['myapp', '(?-mix:one.+)', 'default', '::QueueBus::Rider']])
-        expect(Application.new('myapp').subscription_matches('bus_event_type' => 'one').collect { |s| [s.app_key, s.key, s.queue_name, s.class_name] }).to match_array([['myapp', 'one', 'default', '::QueueBus::Rider']])
-        expect(Application.new('myapp').subscription_matches('bus_event_type' => 'one_x').collect { |s| [s.app_key, s.key, s.queue_name, s.class_name] }).to match_array([['myapp', '(?-mix:one.+)', 'default', '::QueueBus::Rider'], ['myapp', '(?-mix:one_.*)', 'default', '::QueueBus::Rider']])
+        expect(Application.new('myapp').subscription_matches('bus_event_type' => 'onex').collect do |s|
+          [s.app_key, s.key, s.queue_name,
+           s.class_name]
+        end).to match_array([['myapp', '(?-mix:one.+)', 'default', '::QueueBus::Rider']])
+        expect(Application.new('myapp').subscription_matches('bus_event_type' => 'donex').collect do |s|
+          [s.app_key, s.key, s.queue_name,
+           s.class_name]
+        end).to match_array([['myapp', '(?-mix:one.+)', 'default', '::QueueBus::Rider']])
+        expect(Application.new('myapp').subscription_matches('bus_event_type' => 'one').collect do |s|
+          [s.app_key, s.key, s.queue_name, s.class_name]
+        end).to match_array([['myapp', 'one', 'default', '::QueueBus::Rider']])
+        expect(Application.new('myapp').subscription_matches('bus_event_type' => 'one_x').collect do |s|
+          [s.app_key, s.key, s.queue_name,
+           s.class_name]
+        end).to match_array([['myapp', '(?-mix:one.+)', 'default', '::QueueBus::Rider'],
+                             ['myapp', '(?-mix:one_.*)', 'default', '::QueueBus::Rider']])
       end
     end
   end

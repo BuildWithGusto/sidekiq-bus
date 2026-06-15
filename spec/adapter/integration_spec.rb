@@ -53,7 +53,7 @@ describe 'Sidekiq Integration' do
     let(:delayed_attrs) do
       { 'bus_delayed_until' => future.to_i,
         'bus_id' => "#{now.to_i}-idfhlkj",
-        'bus_app_hostname' =>  Socket.gethostname }
+        'bus_app_hostname' => Socket.gethostname }
     end
 
     let(:bus_attrs) { delayed_attrs.merge('bus_published_at' => worktime.to_i) }
@@ -72,7 +72,8 @@ describe 'Sidekiq Integration' do
 
       expect(hash['class']).to eq('QueueBus::Worker')
       expect(hash['args'].size).to eq(1)
-      expect(JSON.parse(hash['args'].first)).to eq({ 'bus_class_proxy' => 'QueueBus::Publisher', 'bus_event_type' => 'event_name', 'two' => 'here', 'one' => 1, 'id' => 12 }.merge(delayed_attrs))
+      expect(JSON.parse(hash['args'].first)).to eq({ 'bus_class_proxy' => 'QueueBus::Publisher',
+                                                     'bus_event_type' => 'event_name', 'two' => 'here', 'one' => 1, 'id' => 12 }.merge(delayed_attrs))
       expect(hash['queue']).to eq('bus_incoming')
     end
 
@@ -109,7 +110,8 @@ describe 'Sidekiq Integration' do
         hash = JSON.parse(val)
         expect(hash['class']).to eq('QueueBus::Worker')
         expect(hash['args'].size).to eq(1)
-        expect(JSON.parse(hash['args'].first)).to eq({ 'bus_class_proxy' => 'QueueBus::Publisher', 'bus_event_type' => 'event_name', 'two' => 'here', 'one' => 1, 'id' => 12 }.merge(delayed_attrs))
+        expect(JSON.parse(hash['args'].first)).to eq({ 'bus_class_proxy' => 'QueueBus::Publisher',
+                                                       'bus_event_type' => 'event_name', 'two' => 'here', 'one' => 1, 'id' => 12 }.merge(delayed_attrs))
 
         QueueBus::Publisher.perform(JSON.parse(hash['args'].first))
 
@@ -117,7 +119,8 @@ describe 'Sidekiq Integration' do
         hash = JSON.parse(val)
         expect(hash['class']).to eq('QueueBus::Worker')
         expect(hash['args'].size).to eq(1)
-        expect(JSON.parse(hash['args'].first)).to eq({ 'bus_class_proxy' => 'QueueBus::Driver', 'bus_event_type' => 'event_name', 'two' => 'here', 'one' => 1, 'id' => 12 }.merge(bus_attrs))
+        expect(JSON.parse(hash['args'].first)).to eq({ 'bus_class_proxy' => 'QueueBus::Driver',
+                                                       'bus_event_type' => 'event_name', 'two' => 'here', 'one' => 1, 'id' => 12 }.merge(bus_attrs))
       end
     end
   end

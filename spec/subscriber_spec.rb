@@ -9,6 +9,7 @@ describe QueueBus::Subscriber do
   before(:each) do
     class SubscriberTest1
       include QueueBus::Subscriber
+
       @queue = 'myqueue'
 
       application :my_thing
@@ -26,6 +27,7 @@ describe QueueBus::Subscriber do
 
     class SubscriberTest2
       include QueueBus::Subscriber
+
       application :test2
       subscribe :test2, 'value' => :present
       transform :make_an_int
@@ -250,7 +252,10 @@ describe QueueBus::Subscriber do
   end
 
   describe '.perform' do
-    let(:attributes) { { 'bus_rider_sub_key' => 'SubscriberTest1.event_sub', 'bus_locale' => 'en', 'bus_timezone' => 'PST' } }
+    let(:attributes) do
+      { 'bus_rider_sub_key' => 'SubscriberTest1.event_sub', 'bus_locale' => 'en',
+        'bus_timezone' => 'PST' }
+    end
     it 'should call the method based on key' do
       expect_any_instance_of(SubscriberTest1).to receive(:event_sub)
       SubscriberTest1.perform(attributes)

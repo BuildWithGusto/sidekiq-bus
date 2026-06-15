@@ -1,30 +1,40 @@
-# -*- encoding: utf-8 -*-
-$:.push File.expand_path("../lib", __FILE__)
-require "sidekiq_bus/version"
+# frozen_string_literal: true
 
-Gem::Specification.new do |s|
-  s.name        = "sidekiq-bus"
-  s.version     = SidekiqBus::VERSION
-  s.authors     = ["Brian Leonard"]
-  s.email       = ["brian@bleonard.com"]
-  s.homepage    = "https://github.com/queue-bus/sidekiq-bus"
-  s.summary     = %q{A simple event bus on top of Sidekiq}
-  s.description = %q{A simple event bus on top of Sidekiq. Publish and subscribe to events as they occur through a queue.}
+lib = File.expand_path('lib', __dir__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+require 'sidekiq_bus/version'
 
-  s.files         = `git ls-files`.split("\n")
-  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
-  s.require_paths = ["lib"]
+Gem::Specification.new do |spec|
+  spec.name        = 'sidekiq-bus'
+  spec.version     = SidekiqBus::VERSION
+  spec.authors     = ['Gusto']
+  spec.email       = ['gusto-opensource-buildkite@gusto.com']
+  spec.summary     = 'A simple event bus on top of Sidekiq'
+  spec.description = 'A simple event bus on top of Sidekiq. Fork of queue-bus/queue-bus. ' \
+                     'Publish and subscribe to events as they occur through a queue.'
+  spec.license     = 'MIT'
+  spec.required_ruby_version = '>= 3.3'
 
-  s.add_dependency('queue-bus', ['>= 0.7', '< 1'])
-  s.add_dependency('sidekiq', ['>= 3.0.0', '< 8.0'])
+  spec.metadata['allowed_push_host'] = 'https://rubygems.org'
 
-  s.add_development_dependency("rack")
-  s.add_development_dependency("rspec")
-  s.add_development_dependency("redis-namespace")
-  s.add_development_dependency("pry")
-  s.add_development_dependency("timecop")
-  s.add_development_dependency("json_pure")
-  s.add_development_dependency("rubocop")
-  s.add_development_dependency("sidekiq-scheduler")
+  github_uri = 'https://github.com/guideline-tech/sidekiq-bus'
+
+  spec.homepage = github_uri
+  spec.metadata['homepage_uri'] = spec.homepage
+  spec.metadata['source_code_uri'] = github_uri
+  spec.metadata['changelog_uri'] = "#{github_uri}/blob/master/CHANGELOG.md"
+  spec.metadata['github_repo'] = github_uri
+  spec.metadata['rubygems_mfa_required'] = 'true'
+
+  spec.files         = `git ls-files`.split("\n")
+  spec.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
+  spec.require_paths = ['lib']
+
+  spec.add_dependency 'queue-bus', ['>= 0.7', '< 1']
+  spec.add_dependency 'sidekiq', ['>= 6.5', '< 8.0']
+
+  spec.add_development_dependency 'rspec'
+  spec.add_development_dependency 'rubocop'
+  spec.add_development_dependency 'sidekiq-scheduler'
+  spec.add_development_dependency 'timecop'
 end

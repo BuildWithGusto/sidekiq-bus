@@ -12,7 +12,7 @@ module SidekiqBus
           end
           yield
         end
-     end
-   end
- end
+      end
+    end
+  end
 end
