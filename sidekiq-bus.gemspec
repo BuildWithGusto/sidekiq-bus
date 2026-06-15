@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'queue-bus', ['>= 0.7', '< 1']
-  spec.add_dependency 'sidekiq', ['>= 3.0.0', '< 8.0']
+  spec.add_dependency 'sidekiq', ['>= 6.5', '< 8.0']
 
   spec.add_development_dependency 'json_pure'
   spec.add_development_dependency 'rack'
